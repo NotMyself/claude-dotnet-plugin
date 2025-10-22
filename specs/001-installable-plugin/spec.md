@@ -14,6 +14,11 @@
 - Q: When an agent name conflicts with an existing Claude Code agent, what should happen? → A: Namespace prefix all agents - Prepend "dotnet-" to all agent names during installation, allow user override
 - Q: What is the minimum Claude Code version required, and how should version compatibility be enforced? → A: Last 6 months - Support Claude Code versions released in last 6 months, show warning on older versions but allow installation
 - Q: Should the agent content be reviewed for security concerns (credentials, API keys, sensitive patterns) before inclusion in the public plugin? → A: Audit and sanitize - Review all agents for credentials, API keys, or sensitive patterns; replace with placeholders or examples
+- Q: Should the project's `.claude/settings.json` permissions configuration be included in the distributable plugin? → A: Include in plugin - Users automatically receive all permission grants (PowerShell, Git, Azure CLI, etc.)
+- Q: After converting agents and templates from the `migrate/` directory to the plugin format, what should happen to the original `migrate/` directory? → A: Delete after conversion - Remove migrate/ entirely once all content is converted to plugin format
+- Q: Should the `CLAUDE.md` file (auto-generated development guidelines) be included in the distributed plugin package? → A: Exclude from distribution - Keep CLAUDE.md only in source repository, omit from published plugin package
+- Q: What level of testing is required before releasing version 1.0.0 of the plugin? → A: Manual functional testing AND automated test suite - Build automated tests for installation, agent behavior, skill triggers, plus manual validation of all functionality and documentation
+- Q: Should the plugin repository include example usage documentation showing how each agent responds to typical developer questions? → A: Yes, in separate EXAMPLES.md - Create dedicated examples file with agent interaction samples
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -106,6 +111,7 @@ A developer creating documentation wants to use standardized README templates th
 - Broken or unavailable marketplace.json references MUST result in clear error messages with troubleshooting guidance
 - .NET-specific agent usage on non-.NET projects SHOULD provide graceful degradation with generic development guidance
 - Agent content containing credentials, API keys, or sensitive patterns MUST be sanitized before distribution, replacing with placeholder values or safe examples
+- Existing user `.claude/settings.json` configurations MUST be merged with plugin settings, preserving user's existing permissions and adding plugin permissions where no conflict exists; conflicting permission rules SHOULD prompt user to choose which to keep
 
 ## Requirements *(mandatory)*
 
@@ -134,11 +140,20 @@ A developer creating documentation wants to use standardized README templates th
 - **FR-021**: Plugin installation process MUST display clear error messages when prerequisites are missing (Git unavailable, network failures, file corruption) and list required actions to resolve
 - **FR-022**: Plugin MUST detect Claude Code version during installation and display compatibility warning if version is older than 6 months, while still allowing installation to proceed
 - **FR-023**: All agent content from migrate directory MUST undergo security review to identify and sanitize credentials, API keys, connection strings, or sensitive configuration patterns before public distribution
+- **FR-024**: Plugin MUST include `.claude/settings.json` with pre-configured permissions for .NET development tools (PowerShell, Git, .NET CLI, Azure CLI, Docker) to provide users with automatic permission grants for plugin functionality
+- **FR-025**: The `migrate/` directory MUST be deleted from the repository after all agents and templates have been successfully converted to plugin format and validated
+- **FR-026**: The `CLAUDE.md` development guidelines file MUST be excluded from the distributed plugin package (kept in source repository only for contributors)
+- **FR-027**: Plugin MUST include automated test suite (PowerShell-based using Pester or similar) covering plugin installation, manifest validation, agent loading, and skill trigger scenarios
+- **FR-028**: Automated tests MUST validate all agents load without errors, contain required frontmatter fields, and have proper "dotnet-" namespace prefixes
+- **FR-029**: Automated tests MUST verify settings.json contains required permissions and follows proper JSON schema
+- **FR-030**: Manual functional testing MUST be performed before 1.0.0 release, validating end-to-end installation workflow, agent response quality, skill trigger accuracy, and documentation completeness
+- **FR-031**: Plugin MUST include `EXAMPLES.md` file with representative interaction samples for each agent, showing typical developer questions and expected agent responses to facilitate user onboarding
 
 ### Key Entities
 
 - **Plugin Manifest**: Metadata file (`plugin.json`) defining plugin identity, version, author, and component locations
 - **Marketplace Catalog**: Distribution configuration (`marketplace.json`) listing plugin availability and source location
+- **Settings Configuration**: Permission grants file (`settings.json`) defining allowed/denied/ask permissions for .NET development tools
 - **Agent**: Specialized domain expert (markdown file) providing targeted guidance for specific technologies or workflows
 - **Skill**: Autonomous capability (markdown in skill directory) that triggers automatically based on user context
 - **Template**: Reusable document structure for standardizing project documentation
@@ -156,6 +171,8 @@ A developer creating documentation wants to use standardized README templates th
 - **SC-006**: All agent descriptions trigger appropriate agent selection when users describe related tasks
 - **SC-007**: Plugin installation does not interfere with other installed Claude Code plugins or agents
 - **SC-008**: Plugin can be updated to version 1.1.0 following SemVer without breaking user workflows
+- **SC-009**: Automated test suite achieves 100% validation coverage of plugin manifests, agent frontmatter, settings configuration, and directory structure
+- **SC-010**: All automated tests pass successfully before 1.0.0 release, with zero failures in installation, manifest validation, or agent loading scenarios
 
 ## Assumptions
 
