@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "Modern .NET development agents and Azure expertise for Claude Code",
   "author": {
-    "name": "Bobby Johnson",
+    "name": "NotMyself",
     "email": "bobby@example.com"
   },
-  "homepage": "https://github.com/BobbyJohnson/claude-dotnet-plugin",
-  "repository": "https://github.com/BobbyJohnson/claude-dotnet-plugin",
+  "homepage": "https://github.com/NotMyself/claude-dotnet-plugin",
+  "repository": "https://github.com/NotMyself/claude-dotnet-plugin",
   "license": "MIT",
   "keywords": ["dotnet", "csharp", "azure", "devops", "development"]
 }

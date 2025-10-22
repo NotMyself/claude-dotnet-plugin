@@ -16,7 +16,7 @@ Modern .NET development agents and Azure expertise for Claude Code.
 ### From GitHub
 
 ```
-/plugin marketplace add BobbyJohnson/claude-dotnet-plugin
+/plugin marketplace add NotMyself/claude-dotnet-plugin
 /plugin install claude-dotnet-plugin
 ```
 
@@ -136,7 +136,7 @@ MIT License - see [LICENSE](LICENSE) file for details
 
 ## Author
 
-Bobby Johnson - [bobby@example.com](mailto:bobby@example.com)
+NotMyself - [bobby@example.com](mailto:bobby@example.com)
 
 ## Acknowledgments
 

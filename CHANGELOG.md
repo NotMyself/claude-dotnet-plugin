@@ -34,4 +34,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Placeholder values used for connection strings and authentication examples
 - Safe example data throughout (example.com, generic organization names)
 
-[1.0.0]: https://github.com/BobbyJohnson/claude-dotnet-plugin/releases/tag/v1.0.0
+[1.0.0]: https://github.com/NotMyself/claude-dotnet-plugin/releases/tag/v1.0.0
