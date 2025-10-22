@@ -41,16 +41,35 @@ cd claude-dotnet-plugin
 
 ## Settings
 
-This plugin includes a pre-configured `.claude/settings.json` file that automatically grants permissions for:
+This plugin includes a pre-configured `.claude/settings.json` file with comprehensive tool permissions for .NET development workflows.
 
-- **PowerShell** (`pwsh`): Script execution, Pester testing
-- **Git** (`git`): All git operations (commit, push, pull, branch, status)
-- **GitHub CLI** (`gh`): Issues, PRs, releases
-- **.NET CLI** (`dotnet`): Project creation, builds, testing
-- **Azure CLI** (`az`): Azure and Azure DevOps operations
-- **Docker** (`docker`): Containerized testing environments
+### Auto-Approved Operations
 
-Destructive operations (force push, hard reset, resource deletion) require confirmation.
+The following commands execute without confirmation:
+
+- **PowerShell** (`pwsh`): Script execution, Pester testing, module management
+- **Git** (`git`): Standard operations (commit, push, pull, branch, status, diff, log)
+- **GitHub CLI** (`gh`): Issues, pull requests, releases, repository management
+- **.NET CLI** (`dotnet`): Project creation, builds, testing, package management
+- **Azure CLI** (`az`): Azure resource management, Azure DevOps operations
+- **Docker** (`docker`): Container builds, runs, image management
+- **VSCode** (`code`): Opening files, diff views, merge editors
+- **npm** (`npm`): Package installation, dependency management
+- **wget/curl**: File downloads, API requests, GitHub releases
+
+### Confirmation Required
+
+These potentially destructive operations require explicit user approval:
+
+- **Git destructive ops**: `git push --force`, `git reset --hard`
+- **Azure account**: `az account` (switching subscriptions/tenants)
+- **Azure deletions**: `az * delete`, `az devops * delete`
+- **Docker cleanup**: `docker system prune`
+- **File deletions**: `rm -rf`, `Remove-Item -Recurse -Force`
+
+### Customization
+
+To modify permissions, edit `.claude/settings.json` in your project root. See [Claude Code documentation](https://docs.claude.com/claude-code) for permission syntax.
 
 ## Usage
 
