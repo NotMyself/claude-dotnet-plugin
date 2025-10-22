@@ -8,7 +8,7 @@ Modern .NET development agents and Azure expertise for Claude Code.
 - **dotnet-azure-architect**: Azure cloud architecture and service selection expertise
 - **dotnet-azure-devops**: Azure DevOps pipelines and CI/CD workflows
 - **dotnet-git-manager**: Git workflow management and best practices
-- **4 Meta Agents**: Agent creation, feature prompts, README maintenance, MCP integration
+- **3 Meta Agents**: Agent creation, README maintenance, MCP integration
 - **README Templates**: Library and script project documentation generation skills
 
 ## Installation
@@ -98,7 +98,6 @@ Claude: [Uses README Library Template skill to generate comprehensive README.md]
 ### Meta Agents
 
 - **dotnet-agent-expert**: Create new specialized agents for Claude Code
-- **dotnet-feature-prompt**: Generate comprehensive feature specifications
 - **dotnet-readme-maintainer**: Maintain and update README documentation
 - **dotnet-mcp-expert**: Design MCP (Model Context Protocol) integrations
 

@@ -15,9 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - dotnet-git-manager: Git workflow management with conventional commits and safe repository operations
   - dotnet-azure-architect: Azure cloud architecture with cost-conscious infrastructure as code and Terraform
   - dotnet-azure-devops: Azure DevOps CI/CD pipeline guidance with work item tracking and PR management
-- **Meta Agents** (4):
+- **Meta Agents** (3):
   - dotnet-agent-expert: Agent creation specialist for designing new specialized agents
-  - dotnet-feature-prompt: Feature specification expert for comprehensive requirements
   - dotnet-readme-maintainer: README documentation maintenance with hierarchical summarization
   - dotnet-mcp-expert: MCP (Model Context Protocol) integration specialist
 - **Skills** (2):
