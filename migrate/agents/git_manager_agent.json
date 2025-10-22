@@ -1,0 +1,450 @@
+{
+  "name": "CloudExpertGitManager",
+  "version": "1.0.0",
+  "description": "A specialized git management agent for cloud experts that ensures consistent branching, commit conventions, and safe repository operations",
+  "author": "TailorWell Engineering",
+  "capabilities": [
+    "Repository cloning and initialization",
+    "Branch management with consistent naming",
+    "Commit operations with conventional commit messages", 
+    "Push/pull operations with safety checks",
+    "Interactive merge conflict resolution",
+    "Repository status and health monitoring"
+  ],
+  "environment": {
+    "required_tools": ["git"],
+    "platform": "cross-platform",
+    "shell": "PowerShell 7+, bash, zsh"
+  },
+  "configuration": {
+    "default_branch": "main",
+    "branch_prefix": "feature/",
+    "commit_convention": "conventional",
+    "safety_checks": true,
+    "interactive_mode": true
+  },
+  "rules": {
+    "branch_protection": {
+      "never_commit_to_main": true,
+      "require_branch_prefix": true,
+      "enforce_branch_naming": true
+    },
+    "commit_style": {
+      "convention": "conventional_commits",
+      "require_type": true,
+      "require_description": true,
+      "max_length": 72
+    },
+    "safety": {
+      "check_dirty_working_tree": true,
+      "confirm_destructive_operations": true,
+      "backup_before_major_operations": true
+    }
+  },
+  "commands": {
+    "initialization": {
+      "verify_git": {
+        "command": "git --version",
+        "description": "Verify git is installed and accessible",
+        "expected_output": "git version",
+        "error_handling": "abort_if_missing"
+      },
+      "check_auth": {
+        "command": "git config --global user.name && git config --global user.email",
+        "description": "Verify git is configured with user credentials",
+        "validation": "both_values_present"
+      }
+    },
+    "repository_operations": {
+      "clone_repo": {
+        "command": "git clone {url} {directory}",
+        "description": "Clone a repository to specified directory",
+        "parameters": {
+          "url": {
+            "type": "string",
+            "required": true,
+            "description": "Repository URL (HTTPS or SSH)"
+          },
+          "directory": {
+            "type": "string", 
+            "required": false,
+            "description": "Target directory name"
+          }
+        },
+        "post_actions": ["cd_to_directory", "verify_remote"]
+      },
+      "init_repo": {
+        "command": "git init",
+        "description": "Initialize new git repository",
+        "post_actions": ["set_default_branch"]
+      },
+      "add_remote": {
+        "command": "git remote add {name} {url}",
+        "description": "Add remote repository",
+        "parameters": {
+          "name": {
+            "type": "string",
+            "required": true,
+            "default": "origin"
+          },
+          "url": {
+            "type": "string",
+            "required": true
+          }
+        }
+      }
+    },
+    "branch_management": {
+      "create_feature_branch": {
+        "command": "git checkout -b {branch_name}",
+        "description": "Create and checkout new feature branch",
+        "parameters": {
+          "branch_name": {
+            "type": "string",
+            "required": true,
+            "validation": "must_start_with_feature_prefix",
+            "format": "feature/{description}"
+          }
+        },
+        "pre_checks": ["ensure_clean_working_tree", "fetch_latest"],
+        "post_actions": ["push_upstream"]
+      },
+      "switch_branch": {
+        "command": "git checkout {branch_name}",
+        "description": "Switch to existing branch",
+        "parameters": {
+          "branch_name": {
+            "type": "string",
+            "required": true
+          }
+        },
+        "pre_checks": ["stash_if_dirty"],
+        "post_actions": ["pull_if_tracking"]
+      },
+      "list_branches": {
+        "command": "git branch -a",
+        "description": "List all local and remote branches",
+        "format": "tabular"
+      },
+      "delete_branch": {
+        "command": "git branch -d {branch_name}",
+        "description": "Delete local branch (safe delete)",
+        "parameters": {
+          "branch_name": {
+            "type": "string",
+            "required": true
+          }
+        },
+        "pre_checks": ["confirm_not_current_branch", "confirm_merged"],
+        "force_option": "git branch -D {branch_name}"
+      }
+    },
+    "commit_operations": {
+      "stage_files": {
+        "command": "git add {files}",
+        "description": "Stage files for commit",
+        "parameters": {
+          "files": {
+            "type": "array",
+            "required": true,
+            "default": ["."],
+            "description": "Files to stage (. for all changes)"
+          }
+        }
+      },
+      "commit_changes": {
+        "command": "git commit -m \"{message}\"",
+        "description": "Commit staged changes with conventional commit message",
+        "parameters": {
+          "message": {
+            "type": "string",
+            "required": true,
+            "validation": "conventional_commit_format"
+          }
+        },
+        "message_format": {
+          "pattern": "{type}({scope}): {description}",
+          "types": ["feat", "fix", "docs", "style", "refactor", "test", "chore", "ci", "perf"],
+          "examples": [
+            "feat(auth): add OAuth2 authentication",
+            "fix(api): resolve null reference exception",
+            "docs(readme): update installation instructions",
+            "chore(deps): update NuGet packages"
+          ]
+        },
+        "pre_checks": ["verify_staged_changes", "lint_commit_message"]
+      },
+      "amend_commit": {
+        "command": "git commit --amend -m \"{message}\"",
+        "description": "Amend the last commit",
+        "parameters": {
+          "message": {
+            "type": "string",
+            "required": false,
+            "description": "New commit message (optional)"
+          }
+        },
+        "warnings": ["modifies_history", "avoid_if_pushed"]
+      }
+    },
+    "synchronization": {
+      "fetch_changes": {
+        "command": "git fetch --all --prune",
+        "description": "Fetch all remote changes and prune deleted branches",
+        "post_actions": ["show_status"]
+      },
+      "pull_changes": {
+        "command": "git pull --rebase origin {branch}",
+        "description": "Pull and rebase changes from remote branch",
+        "parameters": {
+          "branch": {
+            "type": "string",
+            "required": false,
+            "default": "current_branch"
+          }
+        },
+        "pre_checks": ["ensure_clean_working_tree"],
+        "conflict_handling": "interactive_resolution"
+      },
+      "push_changes": {
+        "command": "git push origin {branch}",
+        "description": "Push local branch to remote",
+        "parameters": {
+          "branch": {
+            "type": "string",
+            "required": false,
+            "default": "current_branch"
+          }
+        },
+        "safety_checks": ["confirm_not_main_branch"],
+        "force_push": {
+          "command": "git push --force-with-lease origin {branch}",
+          "requires_confirmation": true,
+          "warning": "Force push can overwrite remote history"
+        }
+      },
+      "sync_with_main": {
+        "command_sequence": [
+          "git fetch origin main",
+          "git rebase origin/main"
+        ],
+        "description": "Sync current feature branch with latest main",
+        "pre_checks": ["ensure_feature_branch"],
+        "conflict_handling": "interactive_resolution"
+      }
+    },
+    "merge_conflict_resolution": {
+      "show_conflicts": {
+        "command": "git status --porcelain | grep '^UU'",
+        "description": "List files with merge conflicts",
+        "format": "list"
+      },
+      "open_merge_tool": {
+        "command": "git mergetool",
+        "description": "Open configured merge tool for conflict resolution",
+        "tools": ["vscode", "kdiff3", "p4merge"]
+      },
+      "manual_resolution": {
+        "steps": [
+          "Edit conflicted files manually",
+          "Remove conflict markers (<<<<<<<, =======, >>>>>>>)",
+          "Stage resolved files with git add",
+          "Continue rebase/merge with appropriate command"
+        ]
+      },
+      "continue_rebase": {
+        "command": "git rebase --continue",
+        "description": "Continue rebase after resolving conflicts"
+      },
+      "abort_operation": {
+        "rebase": "git rebase --abort",
+        "merge": "git merge --abort",
+        "description": "Abort current rebase or merge operation"
+      }
+    },
+    "status_and_info": {
+      "repo_status": {
+        "command": "git status --short --branch",
+        "description": "Show repository status in short format",
+        "interpretation": {
+          "M": "Modified",
+          "A": "Added", 
+          "D": "Deleted",
+          "R": "Renamed",
+          "C": "Copied",
+          "U": "Unmerged",
+          "??": "Untracked"
+        }
+      },
+      "show_log": {
+        "command": "git log --oneline --graph --decorate -n {count}",
+        "description": "Show commit history in graph format",
+        "parameters": {
+          "count": {
+            "type": "integer",
+            "default": 10,
+            "description": "Number of commits to show"
+          }
+        }
+      },
+      "show_remotes": {
+        "command": "git remote -v",
+        "description": "Show configured remote repositories"
+      },
+      "check_upstream": {
+        "command": "git rev-list --left-right --count origin/main...HEAD",
+        "description": "Show commits ahead/behind main branch"
+      }
+    }
+  },
+  "workflows": {
+    "feature_development": {
+      "description": "Standard feature development workflow",
+      "steps": [
+        {
+          "step": "sync_main",
+          "commands": ["git checkout main", "git pull origin main"]
+        },
+        {
+          "step": "create_feature_branch", 
+          "commands": ["create_feature_branch"]
+        },
+        {
+          "step": "develop_feature",
+          "description": "Make changes, stage, and commit"
+        },
+        {
+          "step": "sync_with_main",
+          "commands": ["sync_with_main"]
+        },
+        {
+          "step": "push_for_review",
+          "commands": ["push_changes"]
+        }
+      ]
+    },
+    "hotfix_workflow": {
+      "description": "Emergency hotfix workflow",
+      "steps": [
+        {
+          "step": "create_hotfix_branch",
+          "commands": ["git checkout -b hotfix/{description} main"]
+        },
+        {
+          "step": "apply_fix",
+          "description": "Make minimal fix and commit"
+        },
+        {
+          "step": "test_fix",
+          "description": "Verify fix works"
+        },
+        {
+          "step": "push_for_immediate_review",
+          "commands": ["push_changes"]
+        }
+      ]
+    },
+    "conflict_resolution": {
+      "description": "Step-by-step conflict resolution",
+      "steps": [
+        {
+          "step": "identify_conflicts",
+          "commands": ["show_conflicts"]
+        },
+        {
+          "step": "resolve_conflicts",
+          "options": ["open_merge_tool", "manual_resolution"]
+        },
+        {
+          "step": "stage_resolved",
+          "commands": ["git add {resolved_files}"]
+        },
+        {
+          "step": "continue_operation",
+          "commands": ["continue_rebase"]
+        }
+      ]
+    }
+  },
+  "error_handling": {
+    "common_errors": {
+      "not_a_git_repo": {
+        "message": "fatal: not a git repository",
+        "resolution": "Initialize repository with 'git init' or clone existing repository"
+      },
+      "merge_conflicts": {
+        "message": "CONFLICT (content): Merge conflict",
+        "resolution": "Resolve conflicts manually or use merge tool, then continue operation"
+      },
+      "nothing_to_commit": {
+        "message": "nothing to commit, working tree clean",
+        "resolution": "Make changes before committing or check if all changes are staged"
+      },
+      "branch_already_exists": {
+        "message": "fatal: A branch named '{branch}' already exists",
+        "resolution": "Use existing branch or choose different name"
+      },
+      "authentication_failed": {
+        "message": "Authentication failed",
+        "resolution": "Check credentials, SSH keys, or personal access tokens"
+      }
+    }
+  },
+  "best_practices": {
+    "commit_messages": [
+      "Use imperative mood ('Add feature' not 'Added feature')",
+      "Keep first line under 50 characters",
+      "Use conventional commit format",
+      "Include scope when helpful",
+      "Reference issue numbers when applicable"
+    ],
+    "branch_naming": [
+      "Use descriptive names with kebab-case",
+      "Include type prefix (feature/, bugfix/, hotfix/)",
+      "Keep names concise but meaningful",
+      "Avoid special characters except hyphens"
+    ],
+    "general": [
+      "Always work in feature branches",
+      "Keep commits atomic and focused",
+      "Rebase feature branches before merging",
+      "Use meaningful commit messages",
+      "Test before committing",
+      "Don't commit sensitive information"
+    ]
+  },
+  "security_considerations": {
+    "sensitive_files": [
+      "appsettings.json",
+      "appsettings.*.json", 
+      ".env*",
+      "*.pfx",
+      "*.p12",
+      "id_rsa*",
+      "*.pem"
+    ],
+    "gitignore_essentials": [
+      "bin/",
+      "obj/",
+      "*.user",
+      "*.suo",
+      ".vs/",
+      "packages/",
+      "node_modules/",
+      ".env*",
+      "appsettings.Development.json"
+    ]
+  },
+  "integration": {
+    "azure_devops": {
+      "branch_policies": "Align with Azure DevOps branch policies",
+      "pull_requests": "Use PR templates and require reviews",
+      "build_validation": "Ensure builds pass before merge"
+    },
+    "ide_integration": {
+      "visual_studio": "Use built-in Git tools for basic operations",
+      "vscode": "Leverage Git Graph and GitLens extensions",
+      "command_line": "Primary interface for complex operations"
+    }
+  }
+}

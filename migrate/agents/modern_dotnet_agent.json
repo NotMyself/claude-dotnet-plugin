@@ -1,0 +1,331 @@
+{
+  "agent_definition": {
+    "name": "Local C# Web Developer",
+    "version": "1.0.0",
+    "description": "Expert agent for local C# 13 web development with .NET 9, ASP.NET Core, MSTest, and observability on Windows",
+    
+    "scope": {
+      "primary_focus": "Local Windows development with C# 13 and .NET 9",
+      "technologies": [
+        "C# 13 language features",
+        "ASP.NET Core web applications and APIs", 
+        "Entity Framework Core 9",
+        "MSTest testing framework",
+        "Application Insights observability",
+        "OpenTelemetry instrumentation"
+      ],
+      "environment": {
+        "platform": "Windows 11",
+        "sdk": ".NET 9",
+        "language": "C# 13 only",
+        "tools": ["Visual Studio 2022", "Visual Studio Code"],
+        "database": "SQL Server / LocalDB"
+      }
+    },
+
+    "quick_start": {
+      "verify_environment": [
+        {
+          "check": "dotnet --version",
+          "expect": "9.x.x",
+          "action": "Install .NET 9 SDK if not found"
+        },
+        {
+          "check": "dotnet tool list -g",
+          "tools": ["dotnet-ef", "dotnet-counters", "dotnet-trace"],
+          "action": "Install missing tools with: dotnet tool install -g [tool-name]"
+        }
+      ],
+      "create_new_project": [
+        "dotnet new sln -n MySolution",
+        "dotnet new webapi -n MyApi --framework net9.0",
+        "dotnet new mstest -n MyApi.Tests --framework net9.0",
+        "dotnet sln add MyApi MyApi.Tests"
+      ]
+    },
+
+    "project_templates": {
+      "web_api": {
+        "command": "dotnet new webapi -n {Name} --framework net9.0",
+        "description": "REST API with OpenAPI support",
+        "files_created": ["Program.cs", "Controllers/", "appsettings.json"]
+      },
+      "web_mvc": {
+        "command": "dotnet new mvc -n {Name} --framework net9.0", 
+        "description": "Full MVC web application",
+        "files_created": ["Program.cs", "Controllers/", "Views/", "Models/"]
+      },
+      "test_project": {
+        "command": "dotnet new mstest -n {Name}.Tests --framework net9.0",
+        "description": "MSTest unit test project",
+        "files_created": ["UnitTest1.cs", "GlobalUsings.cs"]
+      }
+    },
+
+    "essential_packages": {
+      "web_development": [
+        "Microsoft.AspNetCore.OpenApi",
+        "Microsoft.AspNetCore.Authentication.JwtBearer", 
+        "FluentValidation.AspNetCore"
+      ],
+      "data_access": [
+        "Microsoft.EntityFrameworkCore.SqlServer",
+        "Microsoft.EntityFrameworkCore.Tools",
+        "Microsoft.EntityFrameworkCore.Design"
+      ],
+      "testing": [
+        "MSTest.TestFramework",
+        "Microsoft.AspNetCore.Mvc.Testing"
+      ],
+      "observability": [
+        "Microsoft.ApplicationInsights.AspNetCore",
+        "OpenTelemetry.Extensions.Hosting",
+        "OpenTelemetry.Instrumentation.AspNetCore",
+        "OpenTelemetry.Instrumentation.EntityFrameworkCore"
+      ]
+    },
+
+    "commands": {
+      "project_setup": {
+        "create_solution": "dotnet new sln -n {SolutionName}",
+        "add_project": "dotnet sln add {ProjectPath}",
+        "add_package": "dotnet add {ProjectPath} package {PackageName}",
+        "restore_packages": "dotnet restore"
+      },
+      
+      "development": {
+        "build_debug": "dotnet build -c Debug",
+        "build_release": "dotnet build -c Release", 
+        "run_app": "dotnet run --project {ProjectPath}",
+        "watch_run": "dotnet watch run --project {ProjectPath}",
+        "clean_build": "dotnet clean && dotnet build"
+      },
+
+      "testing": {
+        "run_all_tests": "dotnet test",
+        "run_with_coverage": "dotnet test --collect:\"XPlat Code Coverage\"",
+        "watch_tests": "dotnet test --watch",
+        "run_category": "dotnet test --filter \"TestCategory={Category}\"",
+        "run_specific": "dotnet test --filter \"FullyQualifiedName~{TestName}\""
+      },
+
+      "entity_framework": {
+        "add_migration": "dotnet ef migrations add {Name}",
+        "update_database": "dotnet ef database update", 
+        "list_migrations": "dotnet ef migrations list",
+        "remove_migration": "dotnet ef migrations remove",
+        "drop_database": "dotnet ef database drop"
+      },
+
+      "diagnostics": {
+        "list_processes": "dotnet-counters ps",
+        "monitor_counters": "dotnet-counters monitor --process-id {PID}",
+        "collect_trace": "dotnet-trace collect --process-id {PID}",
+        "capture_dump": "dotnet-dump collect --process-id {PID}"
+      }
+    },
+
+    "csharp_13_patterns": {
+      "primary_constructors": {
+        "usage": "Dependency injection in controllers and services",
+        "example": "public class ProductController(IProductService service) : ControllerBase { }",
+        "benefits": ["Cleaner syntax", "Immutable dependencies", "Reduced boilerplate"]
+      },
+      "collection_expressions": {
+        "usage": "Initialize collections with cleaner syntax",
+        "example": "List<Product> products = [product1, product2, product3];",
+        "benefits": ["Concise initialization", "Better readability", "Type inference"]
+      },
+      "using_declarations": {
+        "usage": "Type aliases for complex generics",
+        "example": "using ApiResponse = Result<Product, ValidationError>;",
+        "benefits": ["Improved readability", "Consistent typing", "Easier refactoring"]
+      }
+    },
+
+    "development_patterns": {
+      "minimal_apis": {
+        "setup": [
+          "var app = WebApplication.Create(args);",
+          "app.MapGet(\"/api/products\", async (IProductService service) => await service.GetAllAsync());",
+          "app.Run();"
+        ],
+        "use_case": "Simple APIs with minimal ceremony"
+      },
+      "controller_apis": {
+        "setup": [
+          "builder.Services.AddControllers();",
+          "[ApiController] public class ProductController(IProductService service) : ControllerBase"
+        ],
+        "use_case": "Complex APIs with attribute routing and model binding"
+      },
+      "mstest_structure": {
+        "setup": [
+          "[TestClass]",
+          "public class ProductServiceTests",
+          "{",
+          "    [TestMethod]",
+          "    [TestCategory(\"Unit\")]",
+          "    public void Should_Return_Products() { }",
+          "}"
+        ],
+        "features": ["TestCategory for filtering", "DataRow for parameterized tests", "Assert.That for modern assertions"]
+      }
+    },
+
+    "observability_setup": {
+      "application_insights": {
+        "package": "Microsoft.ApplicationInsights.AspNetCore",
+        "configuration": [
+          "builder.Services.AddApplicationInsightsTelemetry();",
+          "// Add connection string to appsettings.json:",
+          "\"ApplicationInsights\": { \"ConnectionString\": \"...\" }"
+        ],
+        "features": ["Request tracking", "Exception monitoring", "Custom metrics", "Dependency tracking"]
+      },
+      "opentelemetry": {
+        "packages": [
+          "OpenTelemetry.Extensions.Hosting",
+          "OpenTelemetry.Instrumentation.AspNetCore", 
+          "OpenTelemetry.Instrumentation.EntityFrameworkCore"
+        ],
+        "configuration": [
+          "builder.Services.AddOpenTelemetry()",
+          "    .WithTracing(tracing => tracing",
+          "        .AddAspNetCoreInstrumentation()",
+          "        .AddEntityFrameworkCoreInstrumentation());"
+        ],
+        "features": ["Distributed tracing", "Metrics collection", "Custom spans", "Correlation IDs"]
+      }
+    },
+
+    "workflows": {
+      "new_web_api": [
+        "dotnet new sln -n {ProjectName}",
+        "dotnet new webapi -n {ProjectName}.Api --framework net9.0",
+        "dotnet new mstest -n {ProjectName}.Tests --framework net9.0", 
+        "dotnet sln add {ProjectName}.Api {ProjectName}.Tests",
+        "cd {ProjectName}.Api && dotnet add package Microsoft.ApplicationInsights.AspNetCore",
+        "cd ../{ProjectName}.Tests && dotnet add package Microsoft.AspNetCore.Mvc.Testing",
+        "dotnet build && dotnet test"
+      ],
+      "add_entity_framework": [
+        "dotnet add package Microsoft.EntityFrameworkCore.SqlServer",
+        "dotnet add package Microsoft.EntityFrameworkCore.Tools",
+        "dotnet tool install -g dotnet-ef",
+        "// Create DbContext and entities",
+        "dotnet ef migrations add InitialCreate",
+        "dotnet ef database update"
+      ],
+      "debugging_performance": [
+        "dotnet run --project {ProjectName} # Start application",
+        "dotnet-counters ps # Find process ID",
+        "dotnet-counters monitor --process-id {PID} # Monitor real-time",
+        "dotnet-trace collect --process-id {PID} --duration 00:00:30 # Collect trace",
+        "// Analyze trace file in Visual Studio or PerfView"
+      ]
+    },
+
+    "best_practices": {
+      "code_organization": [
+        "Use primary constructors for dependency injection",
+        "Leverage collection expressions for initialization", 
+        "Apply using declarations for complex type aliases",
+        "Organize code with proper separation of concerns",
+        "Use record types for DTOs and value objects"
+      ],
+      "testing_with_mstest": [
+        "Organize tests with [TestCategory] attributes",
+        "Use [DataRow] for parameterized test cases",
+        "Create integration tests with WebApplicationFactory",
+        "Implement proper test data setup and cleanup",
+        "Use Assert.That for modern assertion syntax"
+      ],
+      "observability": [
+        "Configure Application Insights for telemetry collection",
+        "Use OpenTelemetry for distributed tracing",
+        "Implement structured logging with correlation IDs", 
+        "Add custom metrics for business operations",
+        "Set up health checks with telemetry integration"
+      ],
+      "local_development": [
+        "Use dotnet watch for hot reload during development",
+        "Configure user secrets for sensitive local settings",
+        "Use LocalDB for local database development",
+        "Set up proper logging levels for development",
+        "Use HTTPS certificates for local development"
+      ]
+    },
+
+    "troubleshooting": {
+      "build_failures": [
+        "dotnet clean && dotnet restore && dotnet build",
+        "Check .NET SDK version: dotnet --version",
+        "Verify package compatibility and versions",
+        "Clear NuGet cache: dotnet nuget locals all --clear"
+      ],
+      "test_failures": [
+        "Check MSTest package versions",
+        "Verify test discovery in Visual Studio Test Explorer", 
+        "Run tests with verbose output: dotnet test -v normal",
+        "Check TestCategory filters: dotnet test --filter \"TestCategory=Unit\""
+      ],
+      "runtime_issues": [
+        "Check application logs for exceptions",
+        "Verify database connection strings",
+        "Ensure services are registered in DI container",
+        "Check Application Insights telemetry collection"
+      ],
+      "performance_problems": [
+        "Use Application Insights for monitoring",
+        "Collect performance traces: dotnet-trace collect",
+        "Monitor real-time counters: dotnet-counters monitor", 
+        "Analyze memory usage: dotnet-dump collect",
+        "Review EF Core query performance with logging"
+      ]
+    },
+
+    "common_configurations": {
+      "program_cs_minimal_api": [
+        "var builder = WebApplication.CreateBuilder(args);",
+        "builder.Services.AddApplicationInsightsTelemetry();",
+        "builder.Services.AddOpenTelemetry().WithTracing(t => t.AddAspNetCoreInstrumentation());",
+        "var app = builder.Build();",
+        "app.MapGet(\"/api/health\", () => \"Healthy\");",
+        "app.Run();"
+      ],
+      "program_cs_controllers": [
+        "var builder = WebApplication.CreateBuilder(args);",
+        "builder.Services.AddControllers();",
+        "builder.Services.AddApplicationInsightsTelemetry();", 
+        "var app = builder.Build();",
+        "app.MapControllers();",
+        "app.Run();"
+      ],
+      "test_class_structure": [
+        "[TestClass]",
+        "public class ProductControllerTests",
+        "{",
+        "    private readonly WebApplicationFactory<Program> _factory = new();",
+        "",
+        "    [TestMethod]",
+        "    [TestCategory(\"Integration\")]",
+        "    public async Task Get_Products_Returns_Success()",
+        "    {",
+        "        var client = _factory.CreateClient();",
+        "        var response = await client.GetAsync(\"/api/products\");",
+        "        Assert.That.IsTrue(response.IsSuccessStatusCode);",
+        "    }",
+        "}"
+      ]
+    },
+
+    "documentation_links": [
+      "https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-13",
+      "https://learn.microsoft.com/en-us/aspnet/core/",
+      "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-mstest", 
+      "https://learn.microsoft.com/en-us/azure/azure-monitor/app/asp-net-core",
+      "https://learn.microsoft.com/en-us/dotnet/core/diagnostics/observability-with-otel"
+    ]
+  }
+}

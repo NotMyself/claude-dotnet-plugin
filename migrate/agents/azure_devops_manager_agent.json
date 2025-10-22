@@ -1,0 +1,291 @@
+{
+  "agent_definition": {
+    "name": "azure_devops_manager",
+    "version": "1.0.0",
+    "description": "Automated Azure DevOps management agent for enterprise CI/CD workflows, work item tracking, and team communication",
+    
+    "system_requirements": {
+      "azure_cli": ">=2.30.0",
+      "extensions": ["azure-devops"],
+      "permissions": ["work_items", "code", "build", "release", "project_team"]
+    },
+
+    "authentication": {
+      "primary_method": "personal_access_token",
+      "environment_variables": {
+        "AZURE_DEVOPS_EXT_PAT": "Primary PAT for authentication",
+        "AZURE_DEVOPS_ORG_URL": "Organization URL (optional default)",
+        "AZURE_DEVOPS_PROJECT": "Project name (optional default)"
+      },
+      "validation_sequence": [
+        "az --version",
+        "az extension show --name azure-devops",
+        "az devops project list",
+        "az devops configure --defaults organization={org} project={project}"
+      ]
+    },
+
+    "core_functions": {
+      "work_item_management": {
+        "create_work_item": {
+          "signature": "create_work_item(type: str, title: str, description: str = None, assignee: str = None, area: str = None, iteration: str = None) -> int",
+          "command_template": "az boards work-item create --type '{type}' --title '{title}' {optional_params}",
+          "supported_types": ["Task", "Epic", "User Story", "Bug", "Feature", "Issue"],
+          "returns": "work_item_id",
+          "example": "create_work_item('Task', 'Implement OAuth login', 'Add OAuth 2.0 authentication', 'dev@company.com')"
+        },
+        
+        "update_work_item": {
+          "signature": "update_work_item(id: int, state: str = None, assignee: str = None, comment: str = None) -> bool",
+          "command_template": "az boards work-item update --id {id} {update_params}",
+          "returns": "success_status",
+          "example": "update_work_item(123, state='In Progress', comment='Started implementation')"
+        },
+
+        "query_work_items": {
+          "signature": "query_work_items(wiql_query: str) -> list",
+          "command_template": "az boards query --wiql '{query}' --output json",
+          "predefined_queries": {
+            "current_sprint": "SELECT * FROM workitems WHERE [System.IterationPath] UNDER '{sprint_path}'",
+            "my_active_items": "SELECT * FROM workitems WHERE [System.AssignedTo] = '{user}' AND [System.State] IN ('Active', 'In Progress')",
+            "team_backlog": "SELECT * FROM workitems WHERE [System.AreaPath] UNDER '{area_path}' AND [System.State] = 'New'"
+          },
+          "returns": "work_item_list"
+        },
+
+        "add_comment": {
+          "signature": "add_comment(work_item_id: int, comment: str, comment_type: str = 'update') -> bool",
+          "command_template": "az boards work-item update --id {id} --discussion '{comment}'",
+          "comment_templates": {
+            "status_update": "**Status Update** 📊\\n\\nProgress: {progress}%\\nCurrent Phase: {phase}\\nNext Steps: {steps}\\nETA: {eta}",
+            "blocker": "**🚨 Blocker Identified**\\n\\nIssue: {issue}\\nImpact: {impact}\\nNeed Help From: {assignee}",
+            "completion": "**✅ Task Completed**\\n\\nSummary: {summary}\\nDeliverables: {deliverables}\\nReady for: {next_stage}"
+          }
+        }
+      },
+
+      "build_management": {
+        "list_pipelines": {
+          "signature": "list_pipelines(status: str = 'all') -> list",
+          "command_template": "az pipelines list --output json",
+          "filters": ["enabled", "disabled", "all"]
+        },
+
+        "trigger_build": {
+          "signature": "trigger_build(pipeline_id: int, branch: str = None, variables: dict = None) -> int",
+          "command_template": "az pipelines run --id {pipeline_id} {optional_params}",
+          "returns": "build_id",
+          "example": "trigger_build(12, branch='feature/auth', variables={'environment': 'staging'})"
+        },
+
+        "get_build_status": {
+          "signature": "get_build_status(build_id: int) -> dict",
+          "command_template": "az pipelines build show --id {build_id} --output json",
+          "returns": "build_details"
+        },
+
+        "analyze_failures": {
+          "signature": "analyze_failures(pipeline_id: int, count: int = 10) -> list",
+          "command_template": "az pipelines build list --definition-ids {pipeline_id} --result failed --top {count} --output json",
+          "returns": "failed_builds_analysis"
+        }
+      },
+
+      "pull_request_management": {
+        "create_pr": {
+          "signature": "create_pr(source_branch: str, target_branch: str, title: str, description: str, work_items: list = None, reviewers: list = None) -> int",
+          "command_template": "az repos pr create --source-branch '{source}' --target-branch '{target}' --title '{title}' --description '{description}' {optional_params}",
+          "title_formats": {
+            "feature": "[FEATURE] {description}",
+            "bugfix": "[BUGFIX] {description}",
+            "hotfix": "[HOTFIX] {description}",
+            "refactor": "[REFACTOR] {description}",
+            "docs": "[DOCS] {description}"
+          },
+          "description_template": "## Summary\\n{summary}\\n\\n## Changes Made\\n{changes}\\n\\n## Testing\\n{testing}\\n\\n## Checklist\\n- [ ] Code follows guidelines\\n- [ ] Tests added/updated\\n- [ ] Documentation updated",
+          "returns": "pr_id"
+        },
+
+        "read_pr_feedback": {
+          "signature": "read_pr_feedback(pr_id: int) -> list",
+          "command_template": "az devops invoke --area git --resource pullRequestCommentThreads --route-parameters repositoryId={repo_id} pullRequestId={pr_id} --http-method GET --api-version 7.1-preview.1 --output json",
+          "returns": "comment_threads"
+        },
+
+        "respond_to_feedback": {
+          "signature": "respond_to_feedback(pr_id: int, thread_id: int, response: str, response_type: str = 'acknowledgment') -> bool",
+          "response_templates": {
+            "acknowledgment": "Thank you for the feedback! I'll address the following:\\n\\n{points}\\n\\nExpected completion: {timeline}",
+            "clarification": "Could you please provide more details about:\\n\\n{questions}\\n\\nThis will help me implement correctly.",
+            "implementation": "✅ **Feedback Addressed**\\n\\n{changes}\\n\\n**Files Updated:**\\n{files}\\n\\nReady for re-review.",
+            "alternative": "I've considered your suggestion. An alternative approach:\\n\\n{explanation}\\n\\n**Pros:** {pros}\\n**Cons:** {cons}\\n\\nThoughts?"
+          }
+        },
+
+        "update_pr": {
+          "signature": "update_pr(pr_id: int, title: str = None, description: str = None, auto_complete: bool = None) -> bool",
+          "command_template": "az repos pr update --id {pr_id} {update_params}"
+        }
+      },
+
+      "deployment_management": {
+        "list_releases": {
+          "signature": "list_releases(definition_id: int = None, status: str = 'active') -> list",
+          "command_template": "az pipelines release list {optional_params} --output json",
+          "status_options": ["active", "draft", "abandoned", "all"]
+        },
+
+        "create_release": {
+          "signature": "create_release(definition_id: int, description: str = None) -> int",
+          "command_template": "az pipelines release create --definition-id {definition_id} {optional_params}",
+          "returns": "release_id"
+        },
+
+        "monitor_deployment": {
+          "signature": "monitor_deployment(release_id: int) -> dict",
+          "command_template": "az pipelines release show --id {release_id} --output json",
+          "returns": "deployment_status"
+        }
+      },
+
+      "artifact_management": {
+        "list_artifacts": {
+          "signature": "list_artifacts(feed_name: str) -> list",
+          "command_template": "az artifacts universal list --feed {feed_name} --output json"
+        },
+
+        "download_artifact": {
+          "signature": "download_artifact(feed: str, package: str, version: str, path: str) -> bool",
+          "command_template": "az artifacts universal download --feed {feed} --name {package} --version {version} --path {path}"
+        },
+
+        "publish_artifact": {
+          "signature": "publish_artifact(feed: str, package: str, version: str, path: str, description: str = None) -> bool",
+          "command_template": "az artifacts universal publish --feed {feed} --name {package} --version {version} --path {path} {optional_params}"
+        }
+      }
+    },
+
+    "automation_workflows": {
+      "daily_standup_prep": {
+        "description": "Prepare daily standup information",
+        "steps": [
+          "query_work_items(my_active_items)",
+          "get_recent_commits()",
+          "check_build_status()",
+          "identify_blockers()"
+        ],
+        "output": "standup_summary"
+      },
+
+      "sprint_review": {
+        "description": "Generate sprint review data",
+        "steps": [
+          "query_work_items(current_sprint)",
+          "calculate_velocity()",
+          "analyze_burndown()",
+          "identify_incomplete_items()"
+        ],
+        "output": "sprint_metrics"
+      },
+
+      "pr_review_cycle": {
+        "description": "Automated PR review response cycle",
+        "steps": [
+          "list_active_prs()",
+          "read_pr_feedback(pr_id)",
+          "analyze_feedback_sentiment()",
+          "generate_appropriate_response()",
+          "update_pr_status()"
+        ],
+        "triggers": ["new_comment", "review_requested"]
+      },
+
+      "build_failure_response": {
+        "description": "Respond to build failures",
+        "steps": [
+          "analyze_failures(pipeline_id)",
+          "identify_root_cause()",
+          "create_bug_work_item()",
+          "notify_team()",
+          "schedule_fix()"
+        ],
+        "triggers": ["build_failed"]
+      }
+    },
+
+    "communication_patterns": {
+      "professional_tone": {
+        "characteristics": ["clear", "concise", "helpful", "collaborative"],
+        "avoid": ["blame", "criticism", "defensive_language"]
+      },
+
+      "response_timing": {
+        "urgent": "within_1_hour",
+        "normal": "within_24_hours",
+        "low_priority": "within_3_days"
+      },
+
+      "escalation_triggers": [
+        "blocker_identified",
+        "critical_build_failure",
+        "security_vulnerability",
+        "deadline_at_risk"
+      ],
+
+      "notification_preferences": {
+        "channels": ["work_item_comments", "pr_comments", "teams_integration"],
+        "frequency": "immediate_for_urgent_else_daily_digest"
+      }
+    },
+
+    "error_handling": {
+      "authentication_failure": {
+        "symptoms": ["401", "TF400813"],
+        "resolution": "verify_pat_and_permissions"
+      },
+      "rate_limiting": {
+        "symptoms": ["429", "rate_limit_exceeded"],
+        "resolution": "implement_exponential_backoff"
+      },
+      "network_issues": {
+        "symptoms": ["timeout", "connection_error"],
+        "resolution": "retry_with_circuit_breaker"
+      }
+    },
+
+    "configuration": {
+      "default_settings": {
+        "output_format": "json",
+        "timeout": 300,
+        "retry_attempts": 3,
+        "batch_size": 50
+      },
+      
+      "customizable_options": {
+        "pr_title_format": "configurable_per_team",
+        "comment_templates": "customizable_per_context",
+        "notification_rules": "configurable_per_user",
+        "automation_triggers": "configurable_per_workflow"
+      }
+    },
+
+    "performance_optimization": {
+      "caching": {
+        "work_item_queries": "cache_for_5_minutes",
+        "build_status": "cache_for_1_minute",
+        "user_permissions": "cache_for_1_hour"
+      },
+      
+      "batch_operations": {
+        "work_item_updates": "batch_up_to_100",
+        "comment_processing": "batch_up_to_50"
+      },
+      
+      "parallel_execution": {
+        "independent_queries": "execute_concurrently",
+        "feedback_analysis": "process_in_parallel"
+      }
+    }
+  }
+}
