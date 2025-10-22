@@ -1,0 +1,135 @@
+{
+  "agent": "claude-code",
+  "speckit_version": "v0.0.0",
+  "version": "1.0",
+  "backup_history": [],
+  "last_updated": "2025-10-22T16:06:03.6307235Z",
+  "speckit_commands": [
+    "speckit.constitution.md",
+    "speckit.specify.md",
+    "speckit.clarify.md",
+    "speckit.plan.md",
+    "speckit.tasks.md",
+    "speckit.implement.md",
+    "speckit.analyze.md",
+    "speckit.checklist.md"
+  ],
+  "tracked_files": [
+    {
+      "is_official": true,
+      "original_hash": "sha256:E1F7958C4A6B7B1B9EEF2C7588AE1500CC23A1B0710089FEE93EDB47D2E90C64",
+      "path": ".claude/commands/speckit.analyze.md",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:B06B595ABDD1BEBBEF0510C8465BFF690F5450F6CCD58B4B1FEC8190A02821E0",
+      "path": ".claude/commands/speckit.checklist.md",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:FA9B6C1BE77AB2FCAB0CF62570F94D944C95B1B20046557B8653EBDAFA3B7C9A",
+      "path": ".claude/commands/speckit.clarify.md",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:E4ABB5D0314DA0E50618A24843A34348D031AEB46CB74C5000C24BF00FE65496",
+      "path": ".claude/commands/speckit.constitution.md",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:31010EFC0430B623776666951BEE0F90DAF1126F895A965D3BFD1741889CE5F8",
+      "path": ".claude/commands/speckit.implement.md",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:56160637F1268F84DFEC4B66921D6A0A3DD4E0DB869A8DF6A3E545BEFDAE0965",
+      "path": ".claude/commands/speckit.plan.md",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:CDA778BF76DC041BC8CCB7AF8BCCE9FF54E8169F216DB8CD765208DBF9F7FB18",
+      "path": ".claude/commands/speckit.specify.md",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:7600B447AE74CACDDF31D5AAAB6A228EFAF309E31A5ED2F1529D1D2AB41FB820",
+      "path": ".claude/commands/speckit.tasks.md",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:CE7549540FA45543CCA797A150201D868E64495FDFF39DC38246FB17BD4024B3",
+      "path": ".specify/memory/constitution.md",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:4566EB366AF23EF14C1A00EFC01720517ECE5B99C93696E5947F16AEE14BB432",
+      "path": ".specify/scripts/powershell/check-prerequisites.ps1",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:FFF6D7215CF9C085E428C718D816FA1CE3547361A55383510EAE0389C1E6549B",
+      "path": ".specify/scripts/powershell/common.ps1",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:ABBA75BC9FEBCB071AB198D921A59BA0DE8096811907348FF791B891C59BF16E",
+      "path": ".specify/scripts/powershell/create-new-feature.ps1",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:177D86029E05AF06CA3A5F68E4BB16123F7206E69208C304DFCAAB913C72219A",
+      "path": ".specify/scripts/powershell/setup-plan.ps1",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:020EA035B5AB9FA7C5A1A921879B042CD6430A98ACA0E22FDEBB58FBC2826569",
+      "path": ".specify/scripts/powershell/update-agent-context.ps1",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:55ED438C2E861444EF22F45FE5238F3EBF0DC1CB6E53067D7232FBBF4CE82892",
+      "path": ".specify/templates/agent-file-template.md",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:0AD704B60AF2DF817AEE1C0A2ECC0E0304B271D2DE34047DF1C891735967033E",
+      "path": ".specify/templates/checklist-template.md",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:D34545B3D65D9B83D179804BCA1729DA24007BF348F00AFEB3CA660A9000FADF",
+      "path": ".specify/templates/plan-template.md",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:AD98189BCAE9BFD323F47898F08ECD0290E5D805C04D038B4947E1C6ABD40B09",
+      "path": ".specify/templates/spec-template.md",
+      "customized": true
+    },
+    {
+      "is_official": true,
+      "original_hash": "sha256:E63AB85BA885B469A12D69DEE42385A27FC97B50AC7621F126CA3335A10BA13B",
+      "path": ".specify/templates/tasks-template.md",
+      "customized": true
+    }
+  ],
+  "initialized_at": "2025-10-22T16:06:03.6307235Z",
+  "custom_files": []
+}
