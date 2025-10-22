@@ -1,6 +1,6 @@
 ---
 name: README Script Template
-description: Generate README.md for script projects. Use when user requests "create README", "generate documentation", or "add README" for scripts. Also triggers when missing README.md detected in script project root, or during script project setup (PowerShell modules, bash scripts, Python scripts).
+description: Generate README.md for script/automation projects. ONLY trigger when user explicitly mentions script/automation context such as "script", "automation", "PowerShell module", "Bash script", "Python script", or "CLI tool". Also triggers when README.md is missing AND project structure indicates scripts (multiple *.ps1, *.sh, or *.py files, presence of *.psm1/*.psd1 module files). DO NOT trigger on generic "create README" without script/automation context.
 allowed-tools:
   - Write
   - Read

@@ -1,6 +1,6 @@
 ---
 name: README Library Template
-description: Generate README.md for library projects. Use when user requests "create README", "generate documentation", or "add README" for libraries. Also triggers when missing README.md detected in library project root, or during library project initialization (dotnet new classlib, npm init for libraries).
+description: Generate README.md for library/package projects. ONLY trigger when user explicitly mentions library/package context such as "library", "package", "NuGet", "npm package", "SDK", or "API documentation". Also triggers when README.md is missing AND project structure indicates library (*.csproj with OutputType=Library, package.json without bin entry, .nuspec files). DO NOT trigger on generic "create README" without library/package context.
 allowed-tools:
   - Write
   - Read
