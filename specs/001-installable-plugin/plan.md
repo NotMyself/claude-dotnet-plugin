@@ -10,14 +10,14 @@ Transform the existing migrate directory contents (agents and templates) into a 
 ## Technical Context
 
 **Language/Version**: Markdown (agents/skills), JSON (manifests), PowerShell 7+ (testing scripts)
-**Primary Dependencies**: Claude Code plugin system, Git (for distribution), CommonMark/GFM markdown
-**Storage**: File-based (markdown files in agents/ and skills/, JSON manifests in .claude-plugin/)
-**Testing**: Local development marketplace with install/uninstall cycle validation
+**Primary Dependencies**: Claude Code plugin system, Git (for distribution), CommonMark/GFM markdown, Pester (testing framework)
+**Storage**: File-based (markdown files in agents/ and skills/, JSON manifests in .claude-plugin/, settings in .claude/)
+**Testing**: Local development marketplace with install/uninstall cycle validation, automated Pester test suite, manual functional testing
 **Target Platform**: Windows 11 (primary), cross-platform Claude Code support (secondary)
 **Project Type**: Plugin (static content distribution - no runtime code execution)
 **Performance Goals**: <2 minute installation, <5 second agent response time, zero plugin load errors
 **Constraints**: Must comply with all 5 constitution principles, 6-month Claude Code version compatibility, markdown-only format for content
-**Scale/Scope**: 7 agents (4 primary + 3 meta), 2 skills (README templates), 1 marketplace catalog, comprehensive documentation
+**Scale/Scope**: 7 agents (4 primary + 3 meta), 2 skills (README templates), 1 marketplace catalog, comprehensive documentation, automated test suite
 
 ## Constitution Check
 
@@ -102,6 +102,9 @@ claude-dotnet-plugin/                      # Plugin repository root
 │   ├── plugin.json                       # Plugin manifest
 │   └── marketplace.json                   # Marketplace catalog
 │
+├── .claude/                               # Plugin settings
+│   └── settings.json                     # Permission grants for tools
+│
 ├── agents/                                # Agent definitions (7 total)
 │   ├── dotnet-csharp-expert.md           # Modern .NET/C# development agent
 │   ├── dotnet-git-manager.md             # Git workflow management agent
@@ -118,7 +121,15 @@ claude-dotnet-plugin/                      # Plugin repository root
 │   └── readme-script-template/           # Script project README skill
 │       └── SKILL.md
 │
-├── migrate/                               # Source content (to be converted)
+├── tests/                                 # Automated test suite (Pester)
+│   ├── Invoke-PluginTests.ps1            # Test runner
+│   ├── Manifest.Tests.ps1                # Manifest validation tests
+│   ├── Settings.Tests.ps1                # Settings validation tests
+│   ├── Agent.Tests.ps1                   # Agent validation tests
+│   ├── Skill.Tests.ps1                   # Skill validation tests
+│   └── Structure.Tests.ps1               # Directory structure tests
+│
+├── migrate/                               # Source content (deleted after conversion per FR-025)
 │   ├── agents/                           # Original JSON agent definitions
 │   └── templates/                        # Original template files
 │
@@ -126,7 +137,7 @@ claude-dotnet-plugin/                      # Plugin repository root
 │   └── research/                         # Research artifacts
 │       └── claude-code-plugin-developer-guide.md
 │
-├── .specify/                              # Specification framework
+├── .specify/                              # Specification framework (excluded from distribution per FR-026)
 │   ├── memory/                           # Project governance
 │   │   └── constitution.md
 │   ├── templates/                        # Templates
@@ -134,11 +145,13 @@ claude-dotnet-plugin/                      # Plugin repository root
 │
 ├── README.md                              # Main documentation
 ├── CHANGELOG.md                           # Version history
+├── EXAMPLES.md                            # Agent interaction examples (FR-031)
 ├── LICENSE                                # MIT license
+├── CLAUDE.md                              # Development guidelines (excluded from distribution per FR-026)
 └── .gitignore                            # Git ignore rules
 ```
 
-**Structure Decision**: Plugin structure follows constitution's "Single Plugin" distribution pattern with components at root. The migrate directory preserves original content for reference and conversion tracking. All agent files use "dotnet-" namespace prefix per FR-005 to prevent naming conflicts. Skills are organized in skill-name/SKILL.md format per constitution requirements.
+**Structure Decision**: Plugin structure follows constitution's "Single Plugin" distribution pattern with components at root. The migrate directory contains source content for conversion and will be deleted after successful conversion per FR-025. All agent files use "dotnet-" namespace prefix per FR-005 to prevent naming conflicts. Skills are organized in skill-name/SKILL.md format per constitution requirements.
 
 ## Complexity Tracking
 
@@ -154,3 +167,106 @@ This plugin implementation requires no deviation from constitutional principles.
 - Security review for content sanitization
 
 No complexity justification needed.
+
+---
+
+## Testing Strategy
+
+**Approach**: Comprehensive automated testing with Pester framework plus manual functional validation per FR-027 through FR-030.
+
+### Automated Testing (Phase 8)
+
+**Framework**: Pester (PowerShell testing framework)
+**Coverage Target**: 100% validation of plugin structure, manifests, agents, skills, and settings
+**Test Suites**: 37 automated test tasks organized by validation domain
+
+#### Test Categories
+
+1. **Manifest Validation** (7 tests)
+   - plugin.json: Valid JSON, required fields, SemVer version, kebab-case name
+   - marketplace.json: Valid JSON, required fields, version synchronization
+
+2. **Settings Validation** (4 tests - FR-029)
+   - settings.json: Valid JSON, permissions structure
+   - Required tools present: pwsh, git, dotnet, az, docker
+   - Appropriate ask permissions for destructive operations
+
+3. **Agent Validation** (7 tests - FR-028)
+   - All agents exist and have valid YAML frontmatter
+   - Required frontmatter fields present (name, description, color)
+   - All agent names use "dotnet-" namespace prefix
+   - Descriptions include 2-3 usage examples
+   - No credential patterns (API keys, passwords, tokens)
+   - CommonMark specification compliance
+
+4. **Skill Validation** (4 tests)
+   - All skill directories and SKILL.md files exist
+   - Valid YAML frontmatter with allowed-tools specified
+
+5. **Structure Validation** (4 tests)
+   - Required directories exist (.claude-plugin, .claude, agents, skills)
+   - Required files exist (README.md, CHANGELOG.md, LICENSE)
+   - .gitignore excludes CLAUDE.md and .specify/ per FR-026
+
+**Success Criteria**: All tests pass with zero failures before 1.0.0 release per SC-010.
+
+### Manual Functional Testing (Phase 10)
+
+**Scope**: End-to-end validation per FR-030
+
+1. **Installation Workflow**: Fresh Claude Code instance installation test
+2. **Agent Activation**: Verify all 7 agents activate on appropriate questions
+3. **Skill Triggers**: Verify both skills trigger on expected scenarios
+4. **Settings Configuration**: Verify permissions properly applied
+5. **Documentation Accuracy**: Validate README, CHANGELOG, EXAMPLES completeness
+6. **Error Handling**: Verify no installation errors or warnings
+
+---
+
+## Clarification Session Outcomes
+
+The following requirements were added during the clarification session and are fully integrated into the implementation plan:
+
+### Settings Configuration (FR-024)
+
+**Decision**: Include `.claude/settings.json` with pre-configured permissions for .NET development tools
+**Rationale**: Provides automatic permission grants for plugin functionality (PowerShell, Git, .NET CLI, Azure CLI, Docker)
+**Tasks**: T011 (copy settings), T014-T015 (validation), T121-T124 (automated tests)
+
+### Source Artifact Cleanup (FR-025)
+
+**Decision**: Delete `migrate/` directory after successful conversion
+**Rationale**: Clean distribution package, no source artifacts in final plugin
+**Tasks**: T188-T191 (verify conversions), T194 (commit deletion)
+
+### Distribution Exclusions (FR-026)
+
+**Decision**: Exclude `CLAUDE.md` and `.specify/` from distributed plugin package
+**Rationale**: Development-time artifacts not needed by end users
+**Tasks**: T027-T028 (.gitignore configuration), T139 (test validation), T192-T193 (verify exclusion)
+
+### Example Documentation (FR-031)
+
+**Decision**: Create separate `EXAMPLES.md` file with agent interaction samples
+**Rationale**: Improve user onboarding with concrete usage examples for each agent
+**Tasks**: T158-T165 (create examples file with samples for all 7 agents)
+
+---
+
+## Platform Dependencies
+
+The following requirements are **Claude Code platform responsibilities** rather than plugin implementation tasks:
+
+### FR-021: Installation Error Messages
+
+**Requirement**: "Plugin installation process MUST display clear error messages when prerequisites are missing..."
+**Ownership**: Claude Code plugin system handles installation error detection and messaging
+**Plugin Responsibility**: Document installation requirements in README.md (covered by T023)
+
+### FR-022: Version Compatibility Warnings
+
+**Requirement**: "Plugin MUST detect Claude Code version during installation and display compatibility warning..."
+**Ownership**: Claude Code plugin system performs version detection and compatibility checks
+**Plugin Responsibility**: Document supported versions in README.md (covered by T023)
+
+**Note**: Plugins are passive content packages; runtime installation logic resides in the Claude Code platform.
