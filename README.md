@@ -27,8 +27,8 @@ Modern .NET development agents and Azure expertise for Claude Code.
 git clone https://github.com/BobbyJohnson/claude-dotnet-plugin.git
 cd claude-dotnet-plugin
 
-# Add to Claude Code
-/plugin marketplace add C:\Users\BobbyJohnson\src\claude-dotnet-plugin
+# Add to Claude Code (replace with your actual plugin directory path)
+/plugin marketplace add C:\path\to\claude-dotnet-plugin
 /plugin install claude-dotnet-plugin@claude-dotnet-plugin-marketplace
 ```
 
