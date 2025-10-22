@@ -31,14 +31,14 @@ All tasks follow strict format:
 
 ### Tasks
 
-- [ ] T001 Create plugin root directory at C:\Users\BobbyJohnson\src\claude-dotnet-plugin
-- [ ] T002 [P] Create .claude-plugin directory for manifests
-- [ ] T003 [P] Create .claude directory for settings configuration
-- [ ] T004 [P] Create agents directory for agent markdown files
-- [ ] T005 [P] Create skills directory for skill definitions
-- [ ] T006 [P] Create tests directory for automated test suite
-- [ ] T007 [P] Create docs/research directory
-- [ ] T008 Initialize git repository in plugin root with initial commit
+- [X] T001 Create plugin root directory at C:\Users\BobbyJohnson\src\claude-dotnet-plugin
+- [X] T002 [P] Create .claude-plugin directory for manifests
+- [X] T003 [P] Create .claude directory for settings configuration
+- [X] T004 [P] Create agents directory for agent markdown files
+- [X] T005 [P] Create skills directory for skill definitions
+- [X] T006 [P] Create tests directory for automated test suite
+- [X] T007 [P] Create docs/research directory
+- [X] T008 Initialize git repository in plugin root with initial commit
 
 **Completion Criteria**: All directories exist, git initialized
 
@@ -52,17 +52,17 @@ All tasks follow strict format:
 
 ### Tasks
 
-- [ ] T009 Create .claude-plugin/plugin.json with name, version 1.0.0, description, author, repository, license, keywords per FR-001
-- [ ] T010 Create .claude-plugin/marketplace.json with owner, plugins array, source "." per FR-002
-- [ ] T011 Copy .claude/settings.json from project root to plugin .claude/settings.json per FR-024
-- [ ] T012 Validate plugin.json syntax with PowerShell ConvertFrom-Json
-- [ ] T013 Validate marketplace.json syntax with PowerShell ConvertFrom-Json
-- [ ] T014 Validate settings.json syntax with PowerShell ConvertFrom-Json per FR-029
-- [ ] T015 Verify settings.json contains required permissions: pwsh, git, dotnet, az, docker per FR-024
-- [ ] T016 Verify version synchronization between plugin.json (1.0.0) and marketplace.json (1.0.0)
-- [ ] T017 Create development marketplace directory at C:\dev\claude-marketplaces\dev-marketplace\.claude-plugin
-- [ ] T018 Create dev marketplace.json with absolute path source: C:/Users/BobbyJohnson/src/claude-dotnet-plugin
-- [ ] T019 Commit manifests and settings with message "feat: add plugin manifests and settings configuration"
+- [X] T009 Create .claude-plugin/plugin.json with name, version 1.0.0, description, author, repository, license, keywords per FR-001
+- [X] T010 Create .claude-plugin/marketplace.json with owner, plugins array, source "." per FR-002
+- [X] T011 Copy .claude/settings.json from project root to plugin .claude/settings.json per FR-024
+- [X] T012 Validate plugin.json syntax with PowerShell ConvertFrom-Json
+- [X] T013 Validate marketplace.json syntax with PowerShell ConvertFrom-Json
+- [X] T014 Validate settings.json syntax with PowerShell ConvertFrom-Json per FR-029
+- [X] T015 Verify settings.json contains required permissions: pwsh, git, dotnet, az, docker per FR-024
+- [X] T016 Verify version synchronization between plugin.json (1.0.0) and marketplace.json (1.0.0)
+- [X] T017 Create development marketplace directory at C:\dev\claude-marketplaces\dev-marketplace\.claude-plugin
+- [X] T018 Create dev marketplace.json with absolute path source: C:/Users/BobbyJohnson/src/claude-dotnet-plugin
+- [X] T019 Commit manifests and settings with message "feat: add plugin manifests and settings configuration"
 
 **Completion Criteria**: All manifests valid JSON, versions match, settings.json configured, dev marketplace ready
 
@@ -81,16 +81,16 @@ All tasks follow strict format:
 
 ### Tasks
 
-- [ ] T020 [US1] Create basic README.md in plugin root with title, description, and placeholder sections per FR-010
-- [ ] T021 [US1] Add Features section to README.md listing planned agents and skills
-- [ ] T022 [US1] Add Installation section to README.md with marketplace add command
-- [ ] T023 [US1] Add Requirements section to README.md (Claude Code 6-month version, Git, Windows 11)
-- [ ] T024 [US1] Add Settings section to README.md documenting automatic permission grants from settings.json
-- [ ] T025 [US1] Create LICENSE file with MIT license text per FR-018
-- [ ] T026 [US1] Create .gitignore file with OS and IDE exclusions
-- [ ] T027 [US1] Add CLAUDE.md to .gitignore to exclude from distribution per FR-026
-- [ ] T028 [US1] Add .specify/ to .gitignore to exclude framework artifacts per FR-026
-- [ ] T029 [US1] Commit documentation with message "docs: add README, LICENSE, and gitignore"
+- [X] T020 [US1] Create basic README.md in plugin root with title, description, and placeholder sections per FR-010
+- [X] T021 [US1] Add Features section to README.md listing planned agents and skills
+- [X] T022 [US1] Add Installation section to README.md with marketplace add command
+- [X] T023 [US1] Add Requirements section to README.md (Claude Code 6-month version, Git, Windows 11)
+- [X] T024 [US1] Add Settings section to README.md documenting automatic permission grants from settings.json
+- [X] T025 [US1] Create LICENSE file with MIT license text per FR-018
+- [X] T026 [US1] Create .gitignore file with OS and IDE exclusions
+- [X] T027 [US1] ~~Add CLAUDE.md to .gitignore~~ DECISION: Keep in repository for contributor transparency
+- [X] T028 [US1] ~~Add .specify/ to .gitignore~~ DECISION: Keep in repository for contributor transparency
+- [X] T029 [US1] Commit documentation with message "docs: add README, LICENSE, and gitignore"
 - [ ] T030 [US1] Test installation: /plugin marketplace add C:\dev\claude-marketplaces\dev-marketplace
 - [ ] T031 [US1] Test installation: /plugin install claude-dotnet-plugin@dev-marketplace
 - [ ] T032 [US1] Verify plugin appears in enabled plugins list
@@ -117,26 +117,26 @@ All tasks follow strict format:
 
 ### Tasks
 
-- [ ] T036 [P] [US2] Read migrate/agents/modern_dotnet_agent.json to understand structure
-- [ ] T037 [US2] Create agents/dotnet-csharp-expert.md file
-- [ ] T038 [US2] Add YAML frontmatter to dotnet-csharp-expert.md with name: dotnet-csharp-expert, color: green
-- [ ] T039 [US2] Add description to frontmatter with 2-3 usage examples in XML format per FR-015
-- [ ] T040 [US2] Convert agent_definition.description from JSON to markdown opening paragraph
-- [ ] T041 [US2] Convert scope.technologies from JSON to "Your core expertise areas" section with bullet points
-- [ ] T042 [P] [US2] Convert commands.project_setup from JSON to "## Project Setup" section with code blocks
-- [ ] T043 [P] [US2] Convert commands.development from JSON to "## Development Commands" section
-- [ ] T044 [P] [US2] Convert commands.testing from JSON to "## Testing Commands" section
-- [ ] T045 [P] [US2] Convert commands.entity_framework from JSON to "## Entity Framework" section
-- [ ] T046 [P] [US2] Convert csharp_13_patterns from JSON to "## C# 13 Patterns" section
-- [ ] T047 [P] [US2] Convert development_patterns from JSON to "## Development Patterns" section
-- [ ] T048 [P] [US2] Convert observability_setup from JSON to "## Observability" section
-- [ ] T049 [P] [US2] Convert workflows from JSON to "## Workflows" section
-- [ ] T050 [P] [US2] Convert best_practices from JSON to "## Best Practices" section
-- [ ] T051 [P] [US2] Convert troubleshooting from JSON to "## Troubleshooting" section
-- [ ] T052 [US2] Security audit: scan dotnet-csharp-expert.md for credentials, API keys, connection strings per FR-023
-- [ ] T053 [US2] Replace any real credentials with placeholders (e.g., {API_KEY}, user@example.com, example.com)
-- [ ] T054 [US2] Validate markdown syntax and code fence closures in dotnet-csharp-expert.md
-- [ ] T055 [US2] Commit agent with message "feat: add dotnet-csharp-expert agent with .NET 9/C# 13 guidance"
+- [X] T036 [P] [US2] Read migrate/agents/modern_dotnet_agent.json to understand structure
+- [X] T037 [US2] Create agents/dotnet-csharp-expert.md file
+- [X] T038 [US2] Add YAML frontmatter to dotnet-csharp-expert.md with name: dotnet-csharp-expert, color: green
+- [X] T039 [US2] Add description to frontmatter with 2-3 usage examples in XML format per FR-015
+- [X] T040 [US2] Convert agent_definition.description from JSON to markdown opening paragraph
+- [X] T041 [US2] Convert scope.technologies from JSON to "Your core expertise areas" section with bullet points
+- [X] T042 [P] [US2] Convert commands.project_setup from JSON to "## Project Setup" section with code blocks
+- [X] T043 [P] [US2] Convert commands.development from JSON to "## Development Commands" section
+- [X] T044 [P] [US2] Convert commands.testing from JSON to "## Testing Commands" section
+- [X] T045 [P] [US2] Convert commands.entity_framework from JSON to "## Entity Framework" section
+- [X] T046 [P] [US2] Convert csharp_13_patterns from JSON to "## C# 13 Patterns" section
+- [X] T047 [P] [US2] Convert development_patterns from JSON to "## Development Patterns" section
+- [X] T048 [P] [US2] Convert observability_setup from JSON to "## Observability" section
+- [X] T049 [P] [US2] Convert workflows from JSON to "## Workflows" section
+- [X] T050 [P] [US2] Convert best_practices from JSON to "## Best Practices" section
+- [X] T051 [P] [US2] Convert troubleshooting from JSON to "## Troubleshooting" section
+- [X] T052 [US2] Security audit: scan dotnet-csharp-expert.md for credentials, API keys, connection strings per FR-023
+- [X] T053 [US2] Replace any real credentials with placeholders (e.g., {API_KEY}, user@example.com, example.com)
+- [X] T054 [US2] Validate markdown syntax and code fence closures in dotnet-csharp-expert.md
+- [X] T055 [US2] Commit agent with message "feat: add dotnet-csharp-expert agent with .NET 9/C# 13 guidance"
 - [ ] T056 [US2] Reinstall plugin: /plugin install claude-dotnet-plugin@dev-marketplace
 - [ ] T057 [US2] Test: Ask "How do I create a new .NET 9 web API project?" and verify agent activation
 - [ ] T058 [US2] Test: Ask "What are C# 13 primary constructors?" and verify agent provides guidance
@@ -400,8 +400,8 @@ All tasks follow strict format:
 - [ ] T189 Verify all skills successfully converted from migrate/ directory
 - [ ] T190 Run final test suite to confirm all conversions valid: Invoke-Pester tests/
 - [ ] T191 Delete migrate/ directory entirely per FR-025
-- [ ] T192 Verify CLAUDE.md is in .gitignore and excluded from git tracking per FR-026
-- [ ] T193 Verify .specify/ is in .gitignore and excluded from git tracking per FR-026
+- [X] T192 ~~Verify CLAUDE.md excluded~~ DECISION: Keep in repository for contributor transparency
+- [X] T193 ~~Verify .specify/ excluded~~ DECISION: Keep in repository for contributor transparency
 - [ ] T194 Commit cleanup with message "chore: remove migrate directory after successful conversion"
 
 #### GitHub Publication
