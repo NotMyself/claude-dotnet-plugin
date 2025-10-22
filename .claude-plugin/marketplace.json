@@ -1,0 +1,20 @@
+{
+  "name": "claude-dotnet-plugin-marketplace",
+  "owner": {
+    "name": "Bobby Johnson",
+    "email": "bobby@example.com"
+  },
+  "plugins": [
+    {
+      "name": "claude-dotnet-plugin",
+      "source": ".",
+      "description": "Modern .NET development agents and Azure expertise",
+      "version": "1.0.0",
+      "category": "Development Tools",
+      "author": "Bobby Johnson",
+      "homepage": "https://github.com/BobbyJohnson/claude-dotnet-plugin",
+      "license": "MIT",
+      "keywords": ["dotnet", "csharp", "azure", "devops", "development"]
+    }
+  ]
+}
